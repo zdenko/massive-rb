@@ -1,0 +1,7 @@
+/vendor
+*.swp
+/rdoc
+.DS_Store
+.ruby-version
+.bundle
+Makefile
