@@ -7,7 +7,7 @@ Massive is _not_ an object-relational mapper (ORM)! There are no models, no chan
 A quick summary:
 
 * **Dynamic query generation**: Massive uses `method_missing` to figure out which table you want to work with, then you add the criteria using a simple DSL.
-* **FAST**: A super light bit of abstraction right on top of the PG driver.
+* **FAST**: A super light bit of abstraction right on top of the PG driver. In addition, Massive supports prepared statements, which makes things even *faster* (see below).
 * **Document storage**: PostgreSQL's JSONB storage type makes it possible to blend relational and document strategies. Massive offers a robust API to simplify working with documents: objects in, objects out, with document metadata managed for you.
 * **Automatic Document Full Text Search**. Massive builds the document table for you, automatically applying a full text index to common field names, such as "name", "first", "last", "city" and so on. This will be configurable at some point.
 * **Connection Pooling**. It's in there, and it works great. You can change it however you need as well.
@@ -74,6 +74,25 @@ db.users.delete_where("company ~ $1", "Github")
 ```
 
 You can query a view, materialized view or table using this DSL.
+
+## Prepared Statements as Methods
+
+If you know the queries you want to run ahead of time, preload them for extra special speed! Here's an example:
+
+```ruby
+#front-load the queries using a hash
+queries = {
+  active_products: "select * from products where active=true;",
+  products_by_name: "select * from products where name=$1;"
+}
+
+#pass to Massive in spin up
+db = Massive.connect("postgres://localhost/massive_rb", queries: queries)
+
+#execute by name, skipping the precompilation step, making things FAST
+results = db.active_products
+results = db.products_by_name("Stuff")
+```
 
 ## Documents
 
