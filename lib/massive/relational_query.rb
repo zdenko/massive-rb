@@ -37,7 +37,10 @@ module Massive
       params = args.kind_of?(Array) ? args : [args]
       first(sql, params)
     end
-
+    def all
+      sql = "select * from #{@table} limit 500"
+      execute(sql,[])
+    end
     def find(id)
       sql = "select * from #{@table} where id=$1"
       first(sql, [id])
@@ -47,13 +50,13 @@ module Massive
       raise "Expecting a map here" unless criteria.kind_of?(Hash)
       placeholders = criteria.keys.each_with_index.map {|x,i| ["#{x}=$#{i+1}"]}
       sql = "select * from #{@table} where #{placeholders.join(' and ')}"
-      all(sql, criteria.values)
+      execute(sql, criteria.values)
     end
 
     def where(criteria, args)
       sql = "select * from #{@table} where #{criteria}"
       params = args.kind_of?(Array) ? args : [args]
-      all(sql, params)
+      execute(sql, params)
     end
 
     def count 
@@ -68,12 +71,12 @@ module Massive
     end
 
     #execution
-    def all(sql, params)
+    def execute(sql, params)
       @runner.run(sql, params)
     end
 
     def first(sql, params)
-      res = all(sql,params)
+      res = execute(sql,params)
       if(res == []) then
         nil
       else

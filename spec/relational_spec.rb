@@ -10,6 +10,10 @@ describe "Massive Queries" do
     res = db.users.insert({name: "Pete", email: "test@test.com"})
     expect(res.id).to eq(1)
   end
+  it "returns everything" do 
+    res = db.users.all 
+    expect(res.length).to be > 0
+  end
   it "updates a simple record" do
     res = db.users.update(1, {name: "Polly"})
     expect(res.name).to eq("Polly")

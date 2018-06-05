@@ -1,4 +1,3 @@
-require File.expand_path("../lib/massive/version", __FILE__)
 Gem::Specification.new do |s|
   s.name = 'massive'
   s.version = "0.0.1"
@@ -8,10 +7,10 @@ Gem::Specification.new do |s|
   s.author = "Rob Conery"
   s.email = "rob@conery.io"
   s.homepage = "https://github.com/robconery/massiverb"
-  s.license = 'BSD'
+  s.license = 'BSD-3-Clause'
   s.required_ruby_version = ">= 1.9.2"
-  s.files = %w(MIT-LICENSE) + Dir["{spec,lib}/**/*.{rb,RB}"]
+  s.files = %w(LICENSE) + Dir["{spec,lib}/**/*.{rb,RB}"]
   s.require_path = "lib"
-  s.add_development_dependency "rspec"
-  s.add_runtime_dependency 'pg'
+  s.add_development_dependency "rspec", '~> 0'
+  s.add_runtime_dependency 'pg', '~> 0'
 end

@@ -1,7 +1,6 @@
 require 'json'
 require 'ostruct'
 
-
 module Massive
   class DocumentQuery
     def initialize(table_name, runner)
@@ -38,15 +37,18 @@ module Massive
 
     def search(term)
       sql = "select id, body from #{@table} where to_tsquery($1) @@ search"
-      all(sql, [term])
+      execute(sql, [term])
     end
-
-    def find(field, val)
+    def all
+      sql = "select id, body from #{@table} order by id;"
+      execute(sql, [] )
+    end
+    def filter(field, val)
       sql = "select id, body from #{@table} where body -> '#{field.to_s}' ? $1"
       first(sql, [val] )
     end
 
-    def find_by_id(id)
+    def find(id)
       sql = "select id, body from #{@table} where id=$1"
       first(sql, [id] )
     end
@@ -55,21 +57,21 @@ module Massive
       raise "Expecting a hash" unless criteria.kind_of?(Hash)
       json = criteria.to_json
       sql = "select id, body from #{@table} where body @> $1"
-      all(sql, [json] )
+      execute(sql, [json] )
     end
 
     def where(statement, params)
       sql = "select id, body from #{@table} where #{statement}"
       params = params.kind_of?(Array) ? params : [params]
-      all(sql, params)
+      execute(sql, params)
     end
 
     #execution
     def save(doc)
-      raise "Expecting a hash" unless doc.kind_of?(Hash) || doc.kind_of?(OpenStruct)
+      #removing this check for now so classes, arrays, etc can be serialized
+      raise "Expecting a Hash or OpenStruct. This method currently doesn't serialize class instances because I don't know how to do that reliably." unless doc.kind_of?(Hash) || doc.kind_of?(OpenStruct)
       json = doc.kind_of?(OpenStruct) ? doc.to_h.to_json : doc.to_json
-
-      if(doc[:id])
+      if(doc[:id]) #lame but... whatever
         sql = "update #{@table} set body = $1, search=to_tsvector($2), updated_at = now() where id=$3;" 
         first(sql, [json, get_searchable_values(doc.to_h), doc.id])
       else
@@ -82,19 +84,19 @@ module Massive
     end
 
 
-    def all(sql, params)
+    def execute(sql, params)
       begin
         results = @runner.run(sql, params)
         set_id(results)
       rescue PG::UndefinedTable
         create_document_table
-        all(sql, params)
+        execute(sql, params)
       end
     end
 
     def first(sql, params)
       begin
-        res = all(sql,params)
+        res = execute(sql,params)
         if(res == []) then
           nil
         else
@@ -106,15 +108,18 @@ module Massive
       end
     end
 
+    private 
     def get_searchable_values(doc)
 
       #to do: open this up in a config
       searchables = ['name','email','first','first_name','last','last_name','description','title','city','state','address','street', 'company']
       doc.select {|k,v| searchables.include?(k.to_s)}.values.join(" ")
     end
-
-    private 
-
+    def instance_to_hash(doc)
+      hash = {}
+      doc.instance_variables.each {|var| hash[var.to_s.delete("@")] = instance_variable_get(var) }
+      hash
+    end
     def set_id(results)
       results.map do |res|
         if(res[:body]) then

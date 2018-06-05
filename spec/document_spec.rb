@@ -1,29 +1,39 @@
 require_relative "../lib/massive"
 
 docs = Massive.connect_as_docs("postgres://localhost/massive_rb")
-
+class Customer
+  attr_accessor :name, :email
+  def initialize(name, email)
+    @name = name 
+    @email = email
+  end
+end
 describe "Document queries" do
   before(:all) do
     docs.run("drop table if exists customers cascade;", [])
   end
 
-  it "creates a table on save" do
+  it "creates a table on save using a hash" do
     customer = docs.customers.save({name: "Dave", email: "dave@test.com"})
     expect(customer.id).to be > 0
     expect(customer.email).to eq("dave@test.com")
   end
   it "finds by id" do
-    customer = docs.customers.find_by_id(1)
+    customer = docs.customers.find(1)
     expect(customer.id).to be > 0
   end
+  it "returns everything" do
+    customers = docs.customers.all
+    expect(customers.length).to be > 0
+  end
   it "updates if id exists" do
-    customer = docs.customers.find_by_id(1)
+    customer = docs.customers.find(1)
     customer.friend = "Rob"
     res = docs.customers.save(customer)
     expect(res).to be_nil
   end
   it "finds by existence" do
-    customer = docs.customers.find(:email, "dave@test.com")
+    customer = docs.customers.filter(:email, "dave@test.com")
     expect(customer.id).to be > 0
   end
   it "finds by containment" do
