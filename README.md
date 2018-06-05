@@ -160,9 +160,15 @@ Currently, I'm extracting this from a project I'm working on. So if a document i
  * street
  * company
 
-This works for me, but might not work for you. I'll be changing this soon but if you'd like to PR for sending in a configurable set that would be great.
+This works for me, but might not work for you. You can change the list of fields you want to search by passing it in when you open the connection:
+
+```ruby
+docs2 = Massive.connect_as_docs("postgres://localhost/massive_rb", searchable_fields: ["monkey"])
+docs2.monkies.save({monkey: "a little furry friend with sweet blue eyes", email: "test2@test.com"})
+results = docs2.monkies.search("friend") #returns our monkey
+```
 
 ## Is This Ready for Production?
 
-I'm using it... so ... maybe? It's really lightweight but needs a few more tests and some tweaks. Maybe give it a couple of revs.
+I'm using it... so ... maybe? There's not a lot too this library, just a light shim over pure SQL. I feel confident using it in production for myself, if that matters.
 
