@@ -1,17 +1,17 @@
 # Massive.rb: A Postgres-centric Data Access Tool for Ruby
 
-Massive.rb is a light-weight data mapper for Ruby that goes all in on PostgreSQL and fully embraces the power and flexibility of the SQL language and relational metaphors. Providing minimal abstractions for the interfaces and tools you already use, its goal is to do just enough to make working with your data as easy and intuitive as possible, then get out of your way.
+Massive.rb is a light-weight database utility for Ruby devoted to PostgreSQL. Massive doesn't compromise functionality in the name of database portability: you get all the power of PostgreSQL and it's amazing SQL capabilities, wrapped up in a convenient library.
 
-Massive is _not_ an object-relational mapper (ORM)! It doesn't use models, it doesn't track state, and it doesn't limit you to a single entity-based metaphor for accessing and persisting data. We try to do the 80% stuff, leaving the heavier, more challenging (and more fun!) queries for you to to by hand, with good old SQL.
+Massive is _not_ an object-relational mapper (ORM)! There are no models, no change tracking; there's data in and data out - that's it. We try to do the 80% stuff, leaving the heavier, more challenging (and more fun!) queries for you to to by hand, with good old SQL.
 
-Here are some of the high points:
+A quick summary:
 
 * **Dynamic query generation**: Massive uses `method_missing` to figure out which table you want to work with, then you add the criteria using a simple DSL.
-* **Low overhead**: No model classes to maintain, super-simple operations, and direct access to your tables without any need to create or load entity instances beforehand.
+* **FAST**: A super light bit of abstraction right on top of the PG driver.
 * **Document storage**: PostgreSQL's JSONB storage type makes it possible to blend relational and document strategies. Massive offers a robust API to simplify working with documents: objects in, objects out, with document metadata managed for you.
 * **Automatic Document Full Text Search**. Massive builds the document table for you, automatically applying a full text index to common field names, such as "name", "first", "last", "city" and so on. This will be configurable at some point.
-* **Connection Pooling**. It's in there, and it works great.
-* **Postgres everything**: Commitment to a single RDBMS lets us use it to its full potential. Massive supports array fields and operations, regular expression matching, foreign tables, materialized views, and more features found in PostgreSQL but not in other databases.
+* **Connection Pooling**. It's in there, and it works great. You can change it however you need as well.
+* **100% PostgreSQL**: If you've worked with PostgreSQL, you probably love it. The project has been hailed as "the top software project out there" and is considered a pinnacle of software engineering. If you haven't used PostgreSQL before, you're in for a treat! This is why we don't abstract the functionality - this is one database you *want* to cuddle up to.
 
 ## A Simple Example
 
