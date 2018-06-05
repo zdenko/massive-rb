@@ -8,7 +8,7 @@ A quick summary:
 
 * **Dynamic query generation**: Massive uses `method_missing` to figure out which table you want to work with, then you add the criteria using a simple DSL.
 * **FAST**: A super light bit of abstraction right on top of the PG driver. In addition, Massive supports prepared statements, which makes things even *faster* (see below).
-* **Document storage**: PostgreSQL's JSONB storage type makes it possible to blend relational and document strategies. Massive offers a robust API to simplify working with documents: objects in, objects out, with document metadata managed for you.
+* **JSONB/Document Support**: PostgreSQL is amazingly fun, but using a NoSQL solution is even more fun as you don't need to worry about migrations slowing you down. PostgreSQL supports the best of both worlds! Use the blazing fast JSONB storage with a GIN index that *melts* MongoDB in terms of speed to get up and running. If you need more relational control, add it later when you know what your data needs are.
 * **Automatic Document Full Text Search**. Massive builds the document table for you, automatically applying a full text index to common field names, such as "name", "first", "last", "city" and so on. This will be configurable at some point.
 * **Connection Pooling**. It's in there, and it works great. You can change it however you need as well.
 * **100% PostgreSQL**: If you've worked with PostgreSQL, you probably love it. The project has been hailed as "the top software project out there" and is considered a pinnacle of software engineering. If you haven't used PostgreSQL before, you're in for a treat! This is why we don't abstract the functionality - this is one database you *want* to cuddle up to.
