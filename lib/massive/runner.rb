@@ -1,5 +1,4 @@
 require "pg"
-require_relative "record"
 require_relative "connection_pool"
 require "ostruct"
 
