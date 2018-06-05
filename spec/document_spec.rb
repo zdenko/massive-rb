@@ -8,6 +8,7 @@ class Customer
     @email = email
   end
 end
+
 describe "Document queries" do
   before(:all) do
     docs.run("drop table if exists customers cascade;", [])

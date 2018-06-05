@@ -25,5 +25,20 @@ module Massive
       result = run(sql,params)
       result.empty? ? nil : result.fetch(0)
     end
+
+    def prepare(name, sql)
+      @pool.with do |conn|
+        conn.prepare(name.to_s, sql)
+      end
+    end
+
+    def exec_prepared(name, params)
+      args = params.is_a?(Array) ? params : [params]
+      @pool.with do |conn|
+        conn.exec_prepared(name.to_s, args).to_a.map do |row|
+          OpenStruct.new(row)
+        end
+      end
+    end
   end
 end

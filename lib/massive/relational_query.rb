@@ -1,11 +1,13 @@
 module Massive
 
   class RelationalQuery
+
     def initialize(table_name, runner)
       @runner = runner
       @table = table_name
+      @prepared = []
     end
-  
+
     def insert(criteria)
       raise "Expecting a map here" unless criteria.kind_of?(Hash)
       vals = [], arg_list = [], col_list = []
@@ -83,6 +85,8 @@ module Massive
         res.kind_of?(Array) ? res.fetch(0) : res
       end
     end
+
+
 
   end
 
