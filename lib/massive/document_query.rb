@@ -3,7 +3,9 @@ require 'ostruct'
 
 module Massive
   class DocumentQuery
-    def initialize(table_name, runner)
+    
+    def initialize(table_name, runner, searchable_fields)
+      @searchable_fields = searchable_fields
       @runner = runner
       @table = table_name
     end
@@ -110,10 +112,7 @@ module Massive
 
     private 
     def get_searchable_values(doc)
-
-      #to do: open this up in a config
-      searchables = ['name','email','first','first_name','last','last_name','description','title','city','state','address','street', 'company']
-      doc.select {|k,v| searchables.include?(k.to_s)}.values.join(" ")
+      doc.select {|k,v| @searchable_fields.include?(k.to_s)}.values.join(" ")
     end
     def instance_to_hash(doc)
       hash = {}

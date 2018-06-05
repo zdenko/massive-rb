@@ -4,23 +4,25 @@ require_relative "massive/runner"
 
 
 module Massive
-
+  
+  
   def self.connect(url, pool_size: 10, timeout: 5)
     runner = Massive::Runner.new(url, pool_size, timeout)
     RelationalConnection.new(runner)
   end
   
-  def self.connect_as_docs(url,pool_size:10, timeout: 5)
+  def self.connect_as_docs(url, pool_size: 10, timeout: 5, searchable_fields: ['name','email','first','first_name','last','last_name','description','title','city','state','address','street', 'company'])
     runner = Massive::Runner.new(url, pool_size, timeout)
-    DocumentConnection.new(runner)
+    DocumentConnection.new(runner, searchable_fields)
   end
 
   class DocumentConnection
-    def initialize(runner)
+    def initialize(runner, searchable_fields)
+      @searchable_fields = searchable_fields
       @runner = runner
     end
     def method_missing(table_name)
-      Massive::DocumentQuery.new(table_name, @runner)
+      Massive::DocumentQuery.new(table_name, @runner, @searchable_fields)
     end    
     def run(sql, params=[])
       @runner.run(sql, params)

@@ -11,6 +11,7 @@ end
 describe "Document queries" do
   before(:all) do
     docs.run("drop table if exists customers cascade;", [])
+    docs.run("drop table if exists monkies cascade;", [])
   end
 
   it "creates a table on save using a hash" do
@@ -44,8 +45,19 @@ describe "Document queries" do
     results = docs.customers.where("(body ->> 'email') = $1", "dave@test.com")
     expect(results.length).to be > 0
   end
+  it "sets search without error if no searchable field found" do
+    results = docs.customers.save({meat: "whistle"})
+    expect(results.id).to be > 0
+  end
   it 'searches using tsvector' do
     results = docs.customers.search("dave")
+    expect(results.length).to be > 0
+  end
+
+  it "search fields are overridable" do
+    docs2 = Massive.connect_as_docs("postgres://localhost/massive_rb", searchable_fields: ["monkey"])
+    docs2.monkies.save({monkey: "a little furry friend with sweet blue eyes", email: "test2@test.com"})
+    results = docs2.monkies.search("friend")
     expect(results.length).to be > 0
   end
 
